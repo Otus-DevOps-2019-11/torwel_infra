@@ -8,17 +8,17 @@
 		{
 			"type": "googlecompute",
 			"project_id": "{{ user `project_id` }}",
-			"image_name": "reddit-base-{{timestamp}}",
-			"image_family": "reddit-base",
+			"image_name": "reddit-full-{{timestamp}}",
+			"image_family": "reddit-full",
 			"source_image_family": "{{ user `source_image_family` }}",
-			"zone": "europe-west3-b",
+			"zone": "europe-west6-c",
 			"ssh_username": "appuser",
 			"machine_type": "{{ user `machine_type` }}",
-			"image_description": "Half Puma image. Ruby + MongoDB.",
+			"image_description": "Full Reddit aplication image.",
 			"disk_type": "pd-standard",
 			"disk_size": "10",
 			"network": "default",
-			"tags": "packer-base,puma,monolith"
+			"tags": "packer-base,reddit,monolith"
 		}
 	],
 	"provisioners": [
@@ -30,6 +30,11 @@
 		{
 			"type": "shell",
 			"script": "scripts/install_mongodb.sh",
+			"execute_command": "sudo {{.Path}}"
+		},
+		{
+			"type": "shell",
+			"script": "files/install_reddit.sh",
 			"execute_command": "sudo {{.Path}}"
 		}
 	]
