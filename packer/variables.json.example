@@ -1,0 +1,4 @@
+{
+	"project_id": "project-name",
+	"source_image_family": "ubuntu-lts"
+}
