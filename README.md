@@ -3,7 +3,7 @@ torwel Infra repository
 
 
 
-##[   HW 8: terraform-1   ]
+## [   HW 8: terraform-1   ]
 
 __Основное задание.__
 
@@ -45,7 +45,7 @@ EOF
 
 
 
-##[   HW 7: packer-base   ]
+## [   HW 7: packer-base   ]
 
 Создан packer-шаблон ubuntu16.json. Используя его, получим ВМ с установленным Ruby и MongoDB.
 Команда для создания ВМ:
@@ -69,7 +69,7 @@ packer build -var-file variables.json immutable.json
 
 
 
-##[   HW 6: cloud-testapp   ]
+## [   HW 6: cloud-testapp   ]
 
 
 testapp_IP = 34.65.112.216
@@ -100,7 +100,7 @@ gcloud compute firewall-rules create default-puma-server --allow=TCP:9292
 
 
 
-##[   HW 5: cloud-bastion   ]
+## [   HW 5: cloud-bastion   ]
 
 
 bastion_IP = 104.155.81.87 
