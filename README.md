@@ -3,7 +3,7 @@ torwel Infra repository
 
 
 
-##	-----===[   HW 8: terraform-1   ]===-----
+##[   HW 8: terraform-1   ]
 
 __Основное задание.__
 
@@ -18,11 +18,34 @@ terraform apply
 
 __Задание *__
 
-В процессе выполнения
+Добавление одного ssh-ключа в метаданные проекта. Ресурс для main.tf:
+
+```
+resource "google_compute_project_metadata" "ssh_keys" {
+    metadata = {
+      ssh-keys = "appuser:${file("~/.ssh/appuser.pub")}"
+    }
+}
+```
+
+Добавление нескольких ssh-ключей в метаданные проекта. Ресурс для main.tf:
+
+```
+resource "google_compute_project_metadata" "ssh_keys" {
+  metadata = {
+    ssh-keys = <<EOF
+      appuser1:${file("~/.ssh/appuser.pub")}
+      appuser2:${file("~/.ssh/appuser.pub")}
+EOF
+  }
+}
+```
+
+Если добавить в проект ssh-ключ через web-интерфейс, то во время применения ресурса, описывающего ключи, этот ключ будет удален.
 
 
 
-##	-----===[   HW 7: packer-base   ]===-----
+##[   HW 7: packer-base   ]
 
 Создан packer-шаблон ubuntu16.json. Используя его, получим ВМ с установленным Ruby и MongoDB.
 Команда для создания ВМ:
@@ -46,7 +69,7 @@ packer build -var-file variables.json immutable.json
 
 
 
-##	-----===[   HW 6: cloud-testapp   ]===-----
+##[   HW 6: cloud-testapp   ]
 
 
 testapp_IP = 34.65.112.216
@@ -77,7 +100,7 @@ gcloud compute firewall-rules create default-puma-server --allow=TCP:9292
 
 
 
-##	-----===[   HW 5: cloud-bastion   ]===-----
+##[   HW 5: cloud-bastion   ]
 
 
 bastion_IP = 104.155.81.87 

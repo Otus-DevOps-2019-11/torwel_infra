@@ -50,6 +50,21 @@ resource "google_compute_instance" "app" {
   }
 }
 
+#resource "google_compute_project_metadata" "ssh_keys" {
+#  metadata = {
+#    ssh-keys = "appuser:${file("~/.ssh/appuser.pub")}"
+#  }
+#}
+
+resource "google_compute_project_metadata" "ssh_keys" {
+  metadata = {
+    ssh-keys = <<EOF
+      appuser1:${file("~/.ssh/appuser.pub")}
+      appuser2:${file("~/.ssh/appuser.pub")}
+EOF
+  }
+}
+
 resource "google_compute_firewall" "firewall_puma" {
   name = "allow-puma-default"
   # Название сети, в которой действует правило
