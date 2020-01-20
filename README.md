@@ -3,37 +3,82 @@ torwel Infra repository
 
 
 
+## [   HW 8: terraform-1   ]
 
-#	-----===[   packer-base   ]===-----
+__Основное задание.__
 
-# Создан packer-шаблон ubuntu16.json. Используя его, получим ВМ с установленным Ruby и MongoDB.
-# Команда для создания ВМ:
+В директории terraform созданы файлы с кодом и переменными для Terraform'а.
+Они позволяют создать экземпляр ВМ, настроить окружение и запустить приложение Reddit, 
+настроить файервол. Для всего этого достаточно выполнить команды:
 
+```
+cd terraform
+terraform apply
+```
+
+__Задание *__
+
+Добавление одного ssh-ключа в метаданные проекта. Ресурс для main.tf:
+
+```
+resource "google_compute_project_metadata" "ssh_keys" {
+    metadata = {
+      ssh-keys = "appuser:${file("~/.ssh/appuser.pub")}"
+    }
+}
+```
+
+Добавление нескольких ssh-ключей в метаданные проекта. Ресурс для main.tf:
+
+```
+resource "google_compute_project_metadata" "ssh_keys" {
+  metadata = {
+    ssh-keys = <<EOF
+      appuser1:${file("~/.ssh/appuser.pub")}
+      appuser2:${file("~/.ssh/appuser.pub")}
+EOF
+  }
+}
+```
+
+Если добавить в проект ssh-ключ через web-интерфейс, то во время применения ресурса, описывающего ключи, этот ключ будет удален.
+
+
+
+## [   HW 7: packer-base   ]
+
+Создан packer-шаблон ubuntu16.json. Используя его, получим ВМ с установленным Ruby и MongoDB.
+Команда для создания ВМ:
+
+```
 packer build -var-file variables.json ubuntu1604.json
+```
 
-# Создан packer-шаблон immutable.json. Используя его, получим ВМ с установленным окружением
-# и запущенным приложением Reddit.
-# Команда для создания ВМ:
+Создан packer-шаблон immutable.json. Используя его, получим ВМ с установленным окружением
+и запущенным приложением Reddit.
+Команда для создания ВМ:
 
+```
 packer build -var-file variables.json immutable.json
+```
 
-# Файл variables.json содержит параметры для шаблонов.
+Файл variables.json содержит параметры для шаблонов.
 
-# Также создан скрипт create-reddit-vm.sh, при выполнении которого в GCP создается инстанс ВМ,
-# с полностью готовый к работе.
+Также создан скрипт `create-reddit-vm.sh`, при выполнении которого в GCP создается инстанс ВМ,
+полностью готовый к работе.
 
 
 
-#	-----===[   cloud-testapp   ]===-----
+## [   HW 6: cloud-testapp   ]
 
 
 testapp_IP = 34.65.112.216
 testapp_port = 9292
 
+Команда для создания экземпляра ВМ с выполнением скрипта настройки
+окружения и установки сервера Puma
 
-# Команда для создания экземпляра ВМ с выполнением скрипта натройки
-# окружения и установки сервера Puma
-
+```
 gcloud compute instances create reddit-app\
   --boot-disk-size=10GB \
   --image-family ubuntu-1604-lts \
@@ -42,43 +87,57 @@ gcloud compute instances create reddit-app\
   --tags puma-server \
   --restart-on-failure \
   --metadata-from-file startup-script=/home/orwel/otus-devops/torwel_infra/startup_script.sh
+```
 
 
 
-# Команда для создания правила файерволла с помощью gcloud
+Команда для создания правила файерволла с помощью gcloud
 
+```
 gcloud compute firewall-rules create default-puma-server --allow=TCP:9292
+```
 
 
 
 
-#	-----===[   cloud-bastion   ]===-----
+## [   HW 5: cloud-bastion   ]
 
 
 bastion_IP = 104.155.81.87 
 someinternalhost_IP = 10.132.0.4
 
+__Самостоятельное задание__
 
-# Самостоятельное задание
-# Подключение к someinternalhost в одну команду
-# ssh -At -i ~/.ssh/appuser appuser@104.155.81.87 ssh 10.132.0.4
+Подключение к someinternalhost в одну команду
 
-# или
+```
+ssh -At -i ~/.ssh/appuser appuser@104.155.81.87 ssh 10.132.0.4
+```
 
-# ssh -At appuser@104.155.81.87 ssh 10.132.0.4
+или
+
+```
+ssh -At appuser@104.155.81.87 ssh 10.132.0.4
+```
 
 
 
-# Дополнительное задание
-# Необходимо дополнить(создать) файл строками:
+__Дополнительное задание__
 
-# cat ~/.ssh/config
-# Host someinternalhost
-#    HostName 10.132.0.4
-#    User appuser
-#    ProxyCommand ssh -W %h:%p -i ~/.ssh/appuser appuser@104.155.81.87
+Необходимо дополнить(создать) файл строками:
 
-# Теперь подключиться на ВМ удаленной локальной сети
-# через bastion можно c помощью команды вида
-# ssh someinternalhost
+```
+cat ~/.ssh/config
+Host someinternalhost
+    HostName 10.132.0.4
+    User appuser
+    ProxyCommand ssh -W %h:%p -i ~/.ssh/appuser appuser@104.155.81.87
+```
+
+Теперь подключиться на ВМ удаленной локальной сети
+через bastion можно c помощью команды вида
+
+```
+ssh someinternalhost
+```
 
