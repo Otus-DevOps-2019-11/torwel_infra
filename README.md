@@ -3,6 +3,51 @@ torwel Infra repository
 
 
 
+## [   HW 9: terraform-2   ]
+
+__Основное задание.__
+
+Создано две конфигурации для разных окружений терраформа в разных диреториях:
+`terraform/stage` и `terraform/prod`.
+Применение конфигурации происходит из своей поддиректории командой:
+
+```
+terraform apply
+```
+В результате должны быть созданы две ВМ, доступные для управления по протоколу ssh.
+
+__Задание *__
+
+Для обоих окружений настроим хранение state-файла в хранилище Google cloud storage.
+Корзина уже создана при выполении основного задания. В файлах ENV_NAME/main.tf внесем изменения:
+```
+terraform {
+  required_version = "0.12.19"
+  backend "gcs" {
+    bucket = "storage-bucket-torwel-krsk"
+    prefix = "terraform/ENV_NAME"
+  }
+}
+```
+
+А также создадим файлы `ENV_NAME/backend.tf` с содержимым:
+```
+data "terraform_remote_state" "remote_state" {
+  backend = "gcs"
+  config = {
+    bucket = "storage-bucket-torwel-krsk"
+    prefix = "terraform/ENV_NAME"
+  }
+}
+```
+
+где ENV_NAME необходимо заменить на имя настраиваемого окружения prod/stage.
+
+В результате после применения конфигурации state-файлы для обоих окружений будут размещены 
+в хранилище GCS.
+
+
+
 ## [   HW 8: terraform-1   ]
 
 __Основное задание.__
