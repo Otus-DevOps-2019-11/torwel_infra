@@ -1,10 +1,14 @@
 #!/bin/bash
 
-#app_ext_ip=35.246.249.179
-#db_ext_ip=34.89.140.121
+# Get IP addresses from terraform fariables
+app_ext_ip=\"$(cd ../terraform/stage && terraform output app_external_ip)\"
+db_ext_ip=\"$(cd ../terraform/stage && terraform output db_external_ip)\"
 
-app_ext_ip=$(cat inventory.json | jq '.app.hosts.appserver.ansible_host')
-db_ext_ip=$(cat inventory.json | jq '.db.hosts.dbserver.ansible_host')
+
+# Parse IP addresses from static json-inventory
+#app_ext_ip=$(cat inventory.json | jq '.app.hosts.appserver.ansible_host')
+#db_ext_ip=$(cat inventory.json | jq '.db.hosts.dbserver.ansible_host')
+
 
 if [ "$1" == "--list" ] ; then
 cat<<EOF
