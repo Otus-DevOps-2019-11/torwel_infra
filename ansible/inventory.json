@@ -2,7 +2,7 @@
   "app": {
     "hosts": {
       "appserver": {
-        "ansible_host": "34.89.174.8"
+        "ansible_host": "34.89.140.121"
       }
     }
   },
