@@ -1,0 +1,31 @@
+---
+- name: Install MongoDB
+  hosts: all
+  become: true
+
+  tasks:
+          - name: Add an apt key
+            apt_key:
+                    keyserver: keyserver.ubuntu.com
+                    id: EA312927
+
+          - name: Add repository
+            apt_repository:
+                    repo: deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
+                    state: present
+          
+          - name: Install mongodb
+            apt:
+                    update_cache: yes
+                    allow_unauthenticated: yes
+                    upgrade: full
+            apt:
+                    name: mongodb-org
+                    allow_unauthenticated: yes
+                    state: present
+
+          - name: Configure service supervisor
+            systemd:
+                    name: mongod
+                    enabled: yes
+
