@@ -3,6 +3,89 @@ torwel Infra repository
 
 
 
+## [   HW 11: ansible-2   ]
+
+
+Используем плейбуки, хендлеры и шаблоны для конфигурации окружения и деплоя тестового приложения. В работе применяем разные подходы.
+
+__1. Один плейбук, один сценарий.__
+В одном файле содержатся задачи для настройки сервера приложения, сервера БД и развертывания самого приложения. При выполнении плейбука необходимо использовать опции  `--limit` и `--tags` для запуска необходимых задач на группах определенных хостов.
+Пример проверки плейбука:
+```
+$ ansible-playbook reddit_app_one_play.yml --check --limit app --tags deploy-tag
+```
+Пример запуска плейбука:
+```
+$ ansible-playbook reddit_app_one_play.yml --limit app --tags deploy-tag
+```
+
+__2. Один плейбук, но много сценариев.__
+Задачи для групп хостов разделены на разные сценарии со своими тегами. Но сценарии содержатся в одном файле плейбуке. Теперь для запуска определенных задач достаточно указать только тег. Нет необходимости помнить к каким хостам их нужно применить.
+Пример проверки и применения плейбука:
+```
+$ ansible-playbook reddit_app_multiple_plays.yml --tags deploy-tag --check
+$ ansible-playbook reddit_app_multiple_plays.yml --tags deploy-tag
+```
+
+__3. Много плейбуков.__
+Каждый сценарий содержится в отдельном файле. Для запуска плейбука достаточно указать только его имя. Теперь появилась возможность создавать наборы плейбуков, включающие в себя необходимые небольшие плейбуки.
+Пример проверки и применения главного плейбука:
+```
+$ ansible-playbook site.yml --check
+$ ansible-playbook site.yml
+```
+
+__Интегрируем Ansible в Packer.__
+
+Изменим провижн образов Packer с shell-скриптов на Ansible-плейбуки. Используем плейбуки `ansible/packer_app.yml` и `ansible/packer_db.yml`.
+
+Создадим новые установочные образы в GCP. Выполняем команды из корня репозитория. Предварительная проверка на ошибки:
+```
+$ packer validate -var-file=./packer/variables.json ./packer/app.json
+$ packer validate -var-file=./packer/variables.json ./packer/db.json
+```
+Затем сборка образов:
+```
+$ packer bulild -var-file=./packer/variables.json ./packer/app.json
+...
+--> googlecompute: A disk image was created: reddit-app-base-[timestamp]
+
+
+$ packer build -var-file=./packer/variables.json ./packer/db.json
+...
+--> googlecompute: A disk image was created: reddit-db-base-1582539156
+```
+
+
+
+### Запуск проекта
+
+
+Создаем новое окружение:
+```
+$ terraform destroy -auto-approve
+$ terraform apply -auto-approve
+```
+
+Перед проверкой ненеобходимо изменить внешние IP-адреса инстансов в инвентори файле `ansible/inventory.json` и переменную db_host в сценарии приложения `ansible/app.yml`.
+
+Далее сначала проверяем главный плейбук:
+```
+$ ansible-playbook site.yml --check
+```
+затем применяем его:
+
+```
+$ ansible-playbook site.yml
+```
+
+### Проверка работоспособности
+
+Приложение Reddit должно быть доступно по адресу: `http://external-app-ip:9292`.
+Оно должно быть работоспособно. Можно зарегистрироваться и добавлять новые посты.
+
+
+
 ## [   HW 10: ansible-1   ]
 
 __Основное задание.__
