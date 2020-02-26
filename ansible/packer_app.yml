@@ -4,10 +4,10 @@
   become: true
 
   tasks:
-          - name: Install a list of packages
-            apt:
-                    pkg:
-                            - ruby-full
-                            - ruby-bundler
-                            - build-essential
+  - name: Install a list of packages
+    apt:
+      pkg:
+        - ruby-full
+        - ruby-bundler
+        - build-essential
 
