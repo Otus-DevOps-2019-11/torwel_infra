@@ -3,12 +3,12 @@
   hosts: app
   become: true
   vars:
-    db_host: 10.156.15.206
+    db_host: 10.156.15.208
 
   tasks:
   - name: Add unit file for Puma
     copy:
-     src: files/puma.service
+      src: files/puma.service
       dest: /etc/systemd/system/puma.service
     notify: reload puma
 
