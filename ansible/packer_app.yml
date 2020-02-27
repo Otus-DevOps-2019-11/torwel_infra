@@ -1,0 +1,13 @@
+---
+- name: Configure App - install Ruby and Bundle.
+  hosts: all
+  become: true
+
+  tasks:
+  - name: Install a list of packages
+    apt:
+      pkg:
+        - ruby-full
+        - ruby-bundler
+        - build-essential
+
