@@ -1,4 +1,4 @@
-db_host: 10.156.15.218
+db_host: 10.156.15.220
 
 nginx_sites:
   default:
